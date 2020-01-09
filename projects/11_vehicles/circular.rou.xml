@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on Mo 29 Jul 2019 16:07:19 CEST by Eclipse SUMO netedit Version v1_2_0+1311-3e209e504c
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <output>
+        <output-file value="/home/kai/repos/sumo/projects/circular.net.xml"/>
+    </output>
+
+    <processing>
+        <offset.disable-normalization value="true"/>
+    </processing>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+    </junctions>
+
+    <netedit>
+        <route-files value="/home/kai/repos/sumo/projects/circular.route.xml"/>
+    </netedit>
+
+</configuration>
+-->
+
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+  <vType id="simple_car" />
+  <vType id="simple_car_as_platoon_leader" />
+  <vType id="simple_car_as_platoon_follower" />
+  <vType id="simple_car_as_platoon_catchup" />
+  <vType id="simple_car_as_platoon_catchupFollower" />
+  <flow id="carflow" type="simple_car" begin="0" end="0" number="11" from="edge1" to="edge2"/>
+</routes>

@@ -1,0 +1,7 @@
+<configuration>
+    <input>
+       <net-file value="circular.net.xml"/>
+       <route-files value="circular.rou.xml"/>
+       <additional-files value="circular.add.xml"/>
+    </input>
+</configuration>

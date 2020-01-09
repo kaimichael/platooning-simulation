@@ -1,0 +1,20 @@
+***Starting server on port 36455 ***
+Loading net-file from './circular.net.xml'... done (2ms).
+Loading additional-files from './circular.add.xml'... done (1ms).
+Loading done.
+Simulation version v1_2_0+1311-3e209e504c started with time: 0.00
+Simulation ended at time: 10001.00
+Reason: TraCI requested termination.
+Performance: 
+ Duration: 3959ms
+ Real time factor: 2526.14
+ UPS: 5051.528164
+Vehicles: 
+ Inserted: 2
+ Running: 2
+ Waiting: 0
+
+AStarRouter answered 46 queries and explored 11.48 edges on average.
+AStarRouter spent 1ms answering queries (0.02ms on average).
+DijkstraRouter answered 2 queries and explored 11.00 edges on average.
+DijkstraRouter spent 0ms answering queries (0.00ms on average).
