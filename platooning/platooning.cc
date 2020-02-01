@@ -293,10 +293,7 @@ void DecodePackets (Ptr<Socket> socket, ReceiveValues *Values, uint32_t creation
     forwarding = true;
   if (Values->node_id == 0 || Values->node_id == Values->n_vehicles -1)
     forwarding = false;
-  if (delivery_delay > Values->packet_interval)
-  {
-    forwarding = false;
-  }
+
   if (Values->noForward)
   {
     forwarding = false;
@@ -463,11 +460,12 @@ void ReceivePacket (ReceiveValues *Values, std::deque<memory_packet> *packet_mem
       uint32_t packets_from_node = 1;
       uint32_t packets_missed = 0;
       uint32_t last_seq = 0;
+      bool duplicate = false;
       bool got_first = false;
 
       if (packet_memory->size()>0)
       {
-        for (uint32_t k = 0; k < packet_memory->size(); k++)
+        for (uint32_t k = 0; k < packet_memory->size()-1; k++)
         {
           if (packet_memory->at(k).node_id == id)
             {
@@ -475,6 +473,11 @@ void ReceivePacket (ReceiveValues *Values, std::deque<memory_packet> *packet_mem
               {
                 last_seq = packet_memory->at(k).sequence_number;
                 got_first = true;
+              }
+              if (packet_memory->at(k).sequence_number == seq)
+              {
+                duplicate = true;
+                break;
               }
               if (packet_memory->at(k).sequence_number - last_seq > 1)
                {
@@ -520,13 +523,20 @@ void ReceivePacket (ReceiveValues *Values, std::deque<memory_packet> *packet_mem
           fwd_reason = 3;
       }
       if (Values->fwdAll)
+      {
         forwarding = true;
-      if (Values->node_id == 0 || Values->node_id == Values->n_vehicles -1)
-        forwarding = false;
+      }
+      if (duplicate)
+      {
+            forwarding = false;
+      }
       if (delivery_delay > Values->packet_interval)
       {
         forwarding = false;
       }
+      if (Values->node_id == 0 || Values->node_id == Values->n_vehicles -1)
+        forwarding = false;
+
       if (Values->noForward)
       {
         forwarding = false;
