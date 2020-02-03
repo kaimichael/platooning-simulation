@@ -163,9 +163,130 @@ if args.t =='Receive':
             plt.tight_layout()
             plt.savefig(output_name)
     if args.b=='MCS':
-        print('MCS analysis')
+        with open(filelist[0]) as f:
+            firstline=f.readline().strip()
+            res = rx.findall(firstline)
+            node_id =int(float( res[0]))
+            ratelist=[]
+            if len(res) == 8:
+                n_vehicles = int(float(res[3]))
+                length = int(float(res[4]))
+                d_max = float(res[5])/1000
+                loss_max = int(float(res[6]))
+                interval = float(res[7])*1000
+            if len(res) == 9:
+                n_vehicles = float(res[4])
+                length = int(float(res[5]))
+                d_max = float(res[6])/1000
+                loss_max = int(float(res[7]))
+                interval = float(res[8])*1000
+            for i in range(0,args.n):
+                with open(filelist[i]) as g:
+                    firstline=g.readline().strip()
+                    res2 = rx.findall(firstline)
+                    if len(res2) == 8:
+                        ratelist.append(float(res2[1]))
+                    if len(res2) == 9:
+                        ratelist.append(float(res2[1]) + float(res2[2]) / 10.0)
+        if args.x:
+            losslist=[]
+            if not network_coding:
+                for dataframe in dflist:
+                    dataframe.drop_duplicates(subset=['Sequence Number', 'Source ID'], keep='first', inplace=True)
+            for i in range(0,args.n):
+                losslist.append((10000-len(dflist[i][dflist[i]['Source ID'] == n_vehicles-1]))/10000*100)
+            plt.plot(ratelist,losslist,'ro')
+            plt.xlabel('Data rate in Mbps')
+            plt.ylabel('Loss ratio in %')
+            plt.autoscale(enable=True)
+            plt.suptitle('Loss ratio for packets from last vehicles at node {} \n'.format(node_id), fontsize=12)
+            if forward_parameters:
+                plt.title('packet length: {} bytes, number of vehicles: {} \n packet interval: {} ms, maximum delay: {} ms, maximum loss: {} %'.format(length, n_vehicles, interval, d_max, loss_max), fontsize=10, y=1.2)
+            else:
+                plt.title('packet length: {} bytes, number of vehicles: {} \n packet interval: {} ms'.format(length, n_vehicles, interval), fontsize=10, y=1.2)
+            plt.tight_layout()
+            plt.savefig(output_name)
+        if args.z:
+            delaylist=[]
+            if not network_coding:
+                for dataframe in dflist:
+                    dataframe.drop_duplicates(subset=['Sequence Number', 'Source ID'], keep='first', inplace=True)
+            for i in range(0,args.n):
+                delaylist.append((float(dflist[i][dflist[i]['Source ID'] == n_vehicles-1]['Total Delay'].mean())/1000))
+            plt.plot(ratelist,delaylist,'ro')
+            plt.xlabel('Data rate in Mbps')
+            plt.ylabel('Average delay in ms')
+            plt.autoscale(enable=True)
+            plt.suptitle('Average delay for packets from last vehicles at node {} \n'.format(node_id), fontsize=12)
+            if forward_parameters:
+                plt.title('packet length: {} bytes, number of vehicles: {} \n packet interval: {} ms, maximum delay: {} ms, maximum loss: {} %'.format(length, n_vehicles, interval, d_max, loss_max), fontsize=10, y=1.2)
+            else:
+                plt.title('packet length: {} bytes, number of vehicles: {} \n packet interval: {} ms'.format(length, n_vehicles, interval), fontsize=10, y=1.2)
+            plt.tight_layout()
+            plt.savefig(output_name)
     if args.b=='Interval':
-        print('Interval analysis')
+        with open(filelist[0]) as f:
+            firstline=f.readline().strip()
+            res = rx.findall(firstline)
+            node_id =int(float( res[0]))
+            intervallist=[]
+            if len(res) == 8:
+                rate = float(res[1])
+                n_vehicles = int(float(res[3]))
+                length = int(float(res[4]))
+                d_max = float(res[5])/1000
+                loss_max = int(float(res[6]))
+            if len(res) == 9:
+                rate = float(res[1]) + float(res[2]) / 10.0
+                n_vehicles = float(res[4])
+                length = int(float(res[5]))
+                d_max = float(res[6])/1000
+                loss_max = int(float(res[7]))
+            for i in range(0,args.n):
+                with open(filelist[i]) as g:
+                    firstline=g.readline().strip()
+                    res2 = rx.findall(firstline)
+                    if len(res2) == 8:
+                        intervallist.append(float(res2[7])*1000)
+                    if len(res2) == 9:
+                        intervallist.append(float(res2[8])*1000)
+        if args.x:
+            losslist=[]
+            if not network_coding:
+                for dataframe in dflist:
+                    dataframe.drop_duplicates(subset=['Sequence Number', 'Source ID'], keep='first', inplace=True)
+            for i in range(0,args.n):
+                losslist.append((10000-len(dflist[i][dflist[i]['Source ID'] == n_vehicles-1]))/10000*100)
+            plt.plot(intervallist,losslist,'ro')
+            plt.xlabel('Packet interval in ms')
+            plt.ylabel('Loss ratio in %')
+            plt.autoscale(enable=True)
+            plt.xscale('log')
+            plt.suptitle('Loss ratio for packets from last vehicles at node {} \n'.format(node_id), fontsize=12)
+            if forward_parameters:
+                plt.title('data rate: {} Mbps, packet length: {} bytes, number of vehicles: {} \n maximum delay: {} ms, maximum loss: {} %'.format(rate, length, n_vehicles, d_max, loss_max), fontsize=10, y=1.2)
+            else:
+                plt.title('data rate: {} Mbps, packet length: {} bytes, number of vehicles: {}'.format(rate, length, n_vehicles), fontsize=10, y=1.2)
+            plt.tight_layout()
+            plt.savefig(output_name)
+        if args.z:
+            delaylist=[]
+            if not network_coding:
+                for dataframe in dflist:
+                    dataframe.drop_duplicates(subset=['Sequence Number', 'Source ID'], keep='first', inplace=True)
+            for i in range(0,args.n):
+                delaylist.append((float(dflist[i][dflist[i]['Source ID'] == n_vehicles-1]['Total Delay'].mean())/1000))
+            plt.plot(intervallist, delaylist,'ro')
+            plt.xlabel('Packet interval in ms')
+            plt.ylabel('Average delay in ms')
+            plt.autoscale(enable=True)
+            plt.suptitle('Average delay for packets from last vehicles at node {} \n'.format(node_id), fontsize=12)
+            if forward_parameters:
+                plt.title('data rate: {} Mbps, packet length: {} bytes, number of vehicles: {} \n maximum delay: {} ms, maximum loss: {} %'.format(rate, length, n_vehicles, d_max, loss_max), fontsize=10, y=1.2)
+            else:
+                plt.title('data rate: {} Mbps, packet length: {} bytes, number of vehicles: {}'.format(rate, length, n_vehicles), fontsize=10, y=1.2)
+            plt.tight_layout()
+            plt.savefig(output_name)
     if args.b=='Length':
         print('Length analysis')
     if args.b=='NumVehicles':
